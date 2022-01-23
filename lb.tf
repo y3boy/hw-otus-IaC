@@ -1,14 +1,20 @@
 resource "yandex_lb_target_group" "wp_tg" {
   name      = "wp-target-group"
 
-  target {
-    subnet_id = yandex_vpc_subnet.wp-subnet-a.id
-    address   = yandex_compute_instance.wp-app-1.network_interface.0.ip_address
-  }
+  # target {
+  #   subnet_id = yandex_vpc_subnet.wp-subnet-a.id
+  #   address   = yandex_compute_instance.wp-app-1.network_interface.0.ip_address
+  # }
 
+  # target {
+  #   subnet_id = yandex_vpc_subnet.wp-subnet-b.id
+  #   address   = yandex_compute_instance.wp-app-2.network_interface.0.ip_address
+  # }
+  
   target {
-    subnet_id = yandex_vpc_subnet.wp-subnet-b.id
-    address   = yandex_compute_instance.wp-app-2.network_interface.0.ip_address
+    count = 2
+    subnet_id = element(computer_instance_subnet_id, count.index)
+    address   = element(yandex_lb_target_group_addres, count.index)
   }
 }
 
